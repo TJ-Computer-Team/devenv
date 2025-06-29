@@ -34,6 +34,9 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 RUN apt-get update && apt-get install -y default-jdk && rm -rf /var/lib/apt/lists/*
 
+RUN chmod +x /home/tjctgrader/coderunner/generate_subcode.sh
+RUN bash /home/tjctgrader/coderunner/generate_subcode.sh
+
 EXPOSE 8080
 
 CMD ["npm", "run", "dev"]
