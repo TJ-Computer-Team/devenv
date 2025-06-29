@@ -1,0 +1,6 @@
+[submodule "autograder"]
+	path = autograder
+	url = https://github.com/TJ-Computer-Team/autograder
+[submodule "coderunner"]
+	path = coderunner
+	url = https://github.com/TJ-Computer-Team/coderunner
