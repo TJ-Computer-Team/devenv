@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: postgres:16
+    restart: always
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: autograder
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - db_network
+
+
+  autograder:
+    build:
+      context: ../autograder
+      dockerfile: ../config/autograder/Dockerfile
+    container_name: autograder
+    restart: unless-stopped
+    volumes:
+      - ../autograder:/home/tjctgrader/autograder
+      - /home/tjctgrader/autograder/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - coderunner
+    networks:
+      - db_network
+    environment:
+      - PROD=false
+    env_file:
+      - path: ./autograder/.env
+
+  coderunner:
+    build:
+      context: ..
+      dockerfile: ./config/coderunner/Dockerfile
+    container_name: coderunner
+    restart: unless-stopped
+    volumes:
+      - ../coderunner:/home/tjctgrader/coderunner
+      - /home/tjctgrader/coderunner/node_modules
+      - /home/tjctgrader/coderunner/nsjail
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      - PROD=false
+    networks:
+      - db_network
+    privileged: true
+      
+
+volumes:
+  pgdata:
+    name: autograder-pgdata
+
+networks:
+  db_network:
+    driver: bridge
