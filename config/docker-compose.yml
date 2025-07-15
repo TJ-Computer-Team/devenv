@@ -1,39 +1,38 @@
 services:
-  postgres:
+  db:
     image: postgres:16
     restart: always
-    container_name: postgres
     environment:
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: autograder
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - db_network
-
-
-  autograder:
-    build:
-      context: ../autograder
-      dockerfile: ../config/autograder/Dockerfile
-    container_name: autograder
-    restart: unless-stopped
-    volumes:
-      - ../autograder:/home/tjctgrader/autograder
-      - /home/tjctgrader/autograder/node_modules
     ports:
-      - "3000:3000"
-    depends_on:
-      - postgres
-      - coderunner
+      - "5432:5432"
     networks:
       - db_network
-    environment:
-      - PROD=false
-    env_file:
-      - path: ./autograder/.env
-
+  web:
+      build:
+        context: ../autograder2/
+        dockerfile: Dockerfile
+      entrypoint:
+        [
+          "/bin/sh",
+          "-c",
+          "git config --global --add safe.directory /home/tjctgrader/autograder && \
+          /bin/sh entrypoint.sh"
+        ]
+      ports:
+          - "3000:3000"
+      networks:
+          - db_network
+      volumes:
+          - ../autograder2/:/home/tjctgrader/autograder
+          - /home/tjctgrader/autograder/.venv
+          - /home/tjctgrader/autograder/.ruff_cache
+      depends_on:
+        - db
   coderunner:
     build:
       context: ..
@@ -48,7 +47,7 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - postgres
+      - db
     environment:
       - PROD=false
     networks:
