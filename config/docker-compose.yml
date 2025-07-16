@@ -17,13 +17,13 @@ services:
       container_name: autograder
       build:
         context: ../autograder2/
-        dockerfile: scripts/Dockerfile
+        dockerfile: dev/Dockerfile
       entrypoint:
         [
           "/bin/sh",
           "-c",
           "git config --global --add safe.directory /home/tjctgrader/autograder && \
-          cd scripts && \
+          cd dev && \
           /bin/sh entrypoint.sh"
         ]
       ports:
