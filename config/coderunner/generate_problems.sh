@@ -3,7 +3,7 @@ BASE_DIR="/home/tjctgrader/problems"
 mkdir -p "$BASE_DIR"
 
 # Loop to create directories 0-9
-for i in {0..9}; do
+for i in {1..25}; do
     PROBLEM_DIR="$BASE_DIR/$i"
     mkdir -p "$PROBLEM_DIR"
 

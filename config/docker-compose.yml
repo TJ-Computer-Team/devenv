@@ -1,5 +1,6 @@
 services:
   db:
+    container_name: postgres
     image: postgres:16
     restart: always
     environment:
@@ -13,14 +14,16 @@ services:
     networks:
       - db_network
   web:
+      container_name: autograder
       build:
         context: ../autograder2/
-        dockerfile: Dockerfile
+        dockerfile: scripts/Dockerfile
       entrypoint:
         [
           "/bin/sh",
           "-c",
           "git config --global --add safe.directory /home/tjctgrader/autograder && \
+          cd scripts && \
           /bin/sh entrypoint.sh"
         ]
       ports:
