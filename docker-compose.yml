@@ -16,7 +16,7 @@ services:
   web:
       container_name: autograder
       build:
-        context: ../autograder2/
+        context: autograder2/
         dockerfile: dev/Dockerfile
       entrypoint:
         [
@@ -31,19 +31,19 @@ services:
       networks:
           - db_network
       volumes:
-          - ../autograder2/:/home/tjctgrader/autograder
+          - ./autograder2/:/home/tjctgrader/autograder
           - /home/tjctgrader/autograder/.venv
           - /home/tjctgrader/autograder/.ruff_cache
       depends_on:
         - db
   coderunner:
     build:
-      context: ..
-      dockerfile: ./config/coderunner/Dockerfile
+      context: coderunner/
+      dockerfile: ./dev/Dockerfile
     container_name: coderunner
     restart: unless-stopped
     volumes:
-      - ../coderunner:/home/tjctgrader/coderunner
+      - ./coderunner:/home/tjctgrader/coderunner
       - /home/tjctgrader/coderunner/node_modules
       - /home/tjctgrader/coderunner/nsjail
       - /home/tjctgrader/coderunner/subcode
