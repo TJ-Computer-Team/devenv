@@ -20,11 +20,11 @@ services:
         dockerfile: dev/Dockerfile
       entrypoint:
         [
-          "/bin/sh",
+          "/bin/bash",
           "-c",
           "git config --global --add safe.directory /home/tjctgrader/autograder && \
           cd dev && \
-          /bin/sh entrypoint.sh"
+          /bin/bash entrypoint.sh"
         ]
       ports:
           - "3000:3000"
