@@ -1,5 +1,5 @@
 services:
-  db:
+  postgres:
     container_name: postgres
     image: postgres:16
     restart: always
@@ -12,9 +12,17 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - db_network
-  web:
+      - main_network
+  redis:
+        container_name: redis
+        image: redis:latest
+        expose:
+            - "6379"
+        networks:
+            - main_network
+  autograder:
       container_name: autograder
+      image: autograder
       build:
         context: autograder2/
         dockerfile: dev/Dockerfile
@@ -29,13 +37,12 @@ services:
       ports:
           - "3000:3000"
       networks:
-          - db_network
+          - main_network
       volumes:
           - ./autograder2/:/home/tjctgrader/autograder
-          - /home/tjctgrader/autograder/.venv
           - /home/tjctgrader/autograder/.ruff_cache
       depends_on:
-        - db
+        - postgres
   coderunner:
     build:
       context: coderunner/
@@ -50,12 +57,29 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      - redis
     environment:
       - PROD=false
     networks:
-      - db_network
+      - main_network
     privileged: true
+  celery:
+        container_name: celery
+        image: autograder
+        networks:
+            - main_network
+        entrypoint:
+            [
+                "/bin/sh",
+                "-c",
+                "git config --global --add safe.directory /home/tjctgrader/autograder && \
+                uv run celery --app autograder worker -l INFO --without-gossip --without-mingle --without-heartbeat -Ofair"
+            ]
+        depends_on:
+            - autograder
+        volumes:
+          - ./autograder2/:/home/tjctgrader/autograder
+          - /home/tjctgrader/autograder/.ruff_cache
       
 
 volumes:
@@ -63,5 +87,5 @@ volumes:
     name: autograder-pgdata
 
 networks:
-  db_network:
+  main_network:
     driver: bridge
