@@ -43,6 +43,7 @@ services:
           - /home/tjctgrader/autograder/.ruff_cache
       depends_on:
         - postgres
+        - coderunner
   coderunner:
     build:
       context: coderunner/
@@ -51,9 +52,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./coderunner:/home/tjctgrader/coderunner
-      - /home/tjctgrader/coderunner/node_modules
       - /home/tjctgrader/coderunner/nsjail
-      - /home/tjctgrader/coderunner/subcode
+      - /home/tjctgrader/coderunner/target
     ports:
       - "8080:8080"
     depends_on:

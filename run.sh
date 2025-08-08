@@ -7,7 +7,7 @@ if [ "$1" == "reset" ]; then
     rm -rf autograder2/dev/.first_log
 else
     git submodule update --init --recursive
-    sudo docker compose up --build
+    sudo docker compose build  && sudo docker compose up
 fi
 
 
