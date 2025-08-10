@@ -73,10 +73,29 @@ services:
                 "/bin/sh",
                 "-c",
                 "git config --global --add safe.directory /home/tjctgrader/autograder && \
-                uv run celery --app autograder worker -l INFO --without-gossip --without-mingle --without-heartbeat -Ofair"
+                uv run celery --app autograder worker -l INFO -Ofair"
             ]
         depends_on:
             - autograder
+            - redis
+        volumes:
+          - ./autograder2/:/home/tjctgrader/autograder
+          - /home/tjctgrader/autograder/.ruff_cache
+  celery_coderunner:
+        container_name: celery_coderunner
+        image: autograder
+        networks:
+            - main_network
+        entrypoint:
+            [
+                "/bin/sh",
+                "-c",
+                "git config --global --add safe.directory /home/tjctgrader/autograder && \
+                uv run celery --app autograder worker -l INFO -Q coderunner_queue -c 2"
+            ]
+        depends_on:
+            - autograder
+            - redis
         volumes:
           - ./autograder2/:/home/tjctgrader/autograder
           - /home/tjctgrader/autograder/.ruff_cache
