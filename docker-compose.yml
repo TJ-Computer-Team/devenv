@@ -30,7 +30,8 @@ services:
         [
           "/bin/bash",
           "-c",
-          "git config --global --add safe.directory /home/tjctgrader/autograder && \
+          "git config --global --add safe.directory /home/tjctgrader/autograder2 && \
+          git config --global --add safe.directory /home/tjctgrader && \
           cd dev && \
           /bin/bash entrypoint.sh"
         ]
@@ -39,8 +40,9 @@ services:
       networks:
           - main_network
       volumes:
-          - ./autograder2/:/home/tjctgrader/autograder
-          - /home/tjctgrader/autograder/.ruff_cache
+          - ./autograder2/:/home/tjctgrader/autograder2
+          - ./.git:/home/tjctgrader/.git
+          - /home/tjctgrader/autograder2/.ruff_cache
       depends_on:
         - postgres
         - coderunner
@@ -72,15 +74,17 @@ services:
             [
                 "/bin/sh",
                 "-c",
-                "git config --global --add safe.directory /home/tjctgrader/autograder && \
+                "git config --global --add safe.directory /home/tjctgrader/autograder2 && \
+                git config --global --add safe.directory /home/tjctgrader && \
                 uv run celery --app autograder worker -l INFO -Ofair"
             ]
         depends_on:
             - autograder
             - redis
         volumes:
-          - ./autograder2/:/home/tjctgrader/autograder
-          - /home/tjctgrader/autograder/.ruff_cache
+          - ./autograder2/:/home/tjctgrader/autograder2
+          - ./.git:/home/tjctgrader/.git
+          - /home/tjctgrader/autograder2/.ruff_cache
   celery_coderunner:
         container_name: celery_coderunner
         image: autograder
@@ -90,15 +94,17 @@ services:
             [
                 "/bin/sh",
                 "-c",
-                "git config --global --add safe.directory /home/tjctgrader/autograder && \
+                "git config --global --add safe.directory /home/tjctgrader/autograder2 && \
+                git config --global --add safe.directory /home/tjctgrader && \
                 uv run celery --app autograder worker -l INFO -Q coderunner_queue -c 2"
             ]
         depends_on:
             - autograder
             - redis
         volumes:
-          - ./autograder2/:/home/tjctgrader/autograder
-          - /home/tjctgrader/autograder/.ruff_cache
+          - ./autograder2/:/home/tjctgrader/autograder2
+          - ./.git:/home/tjctgrader/.git
+          - /home/tjctgrader/autograder2/.ruff_cache
       
 
 volumes:
