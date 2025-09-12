@@ -3,4 +3,4 @@
 	url = https://github.com/TJ-Computer-Team/coderunner
 [submodule "autograder2"]
 	path = autograder2
-	url = https://github.com/TJ-Computer-Team/autograder2
+	url = https://github.com/zainmarshall/autograder2
