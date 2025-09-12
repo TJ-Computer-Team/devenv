@@ -30,8 +30,7 @@ services:
         [
           "/bin/bash",
           "-c",
-          "git config --global --add safe.directory /home/tjctgrader/autograder && \
-          cd dev && \
+          "cd dev && \
           /bin/bash entrypoint.sh"
         ]
       ports:
@@ -72,8 +71,7 @@ services:
             [
                 "/bin/sh",
                 "-c",
-                "git config --global --add safe.directory /home/tjctgrader/autograder && \
-                uv run celery --app autograder worker -l INFO -Ofair"
+                "uv run celery --app autograder worker -l INFO -Ofair"
             ]
         depends_on:
             - autograder
@@ -90,8 +88,7 @@ services:
             [
                 "/bin/sh",
                 "-c",
-                "git config --global --add safe.directory /home/tjctgrader/autograder && \
-                uv run celery --app autograder worker -l INFO -Q coderunner_queue -c 2"
+                "uv run celery --app autograder worker -l INFO -Q coderunner_queue -c 2"
             ]
         depends_on:
             - autograder
